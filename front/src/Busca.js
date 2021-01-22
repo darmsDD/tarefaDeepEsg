@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
-import './Busca.css'
+import { DataGrid } from '@material-ui/data-grid';
 
 class Busca extends Component {
     constructor(props) {
@@ -17,11 +17,16 @@ class Busca extends Component {
             cities: [],
             showCityInfo: false,
             isSaveButtonShowing: true,
+            selected:[],
         };
+
+        
+
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.saveCity = this.saveCity.bind(this);
-        //this.isCitySaved = this.isCitySaved.bind(this);
+        this.isCitySaved = this.isCitySaved.bind(this);
+        this.deleteCity = this.deleteCity.bind(this);
     }
    
     handleChange(event) {
@@ -42,7 +47,7 @@ class Busca extends Component {
                         wind_speedy:city.wind_speedy
                     }
                 })
-                //this.isCitySaved(city);
+                this.isCitySaved(city);
             }).catch((error)=>{
                 let message;
                 if(error.response!==undefined){
@@ -64,9 +69,9 @@ class Busca extends Component {
             this.setState({showCityInfo:true});
     }
 
-    /*isCitySaved(city){
+    isCitySaved(city){
         let citySaved = false;
-        this.state.cities.map((location)=>{
+        this.state.cities.forEach((location)=>{
             if(location.city_name === city.city_name){
                 this.setState({isSaveButtonShowing:false});
                 citySaved=true;
@@ -75,8 +80,9 @@ class Busca extends Component {
         if(!citySaved){
             this.setState({isSaveButtonShowing:true});
         }
+
     }
-    */
+    
 
     showCityInfo = () =>{
         const { temperature, humidity, wind_speedy, city_name } = this.state.city
@@ -101,7 +107,6 @@ class Busca extends Component {
     saveCity(){
         axios.post(`http://localhost:9000/save`)
         .then(res => {
-            console.log('entrei aqui2');
             alert("Cidade salva com sucesso")
             //this.setState({cities:[...this.state.cities,this.state.city]});
             this.setState({isSaveButtonShowing:false});
@@ -121,6 +126,75 @@ class Busca extends Component {
         })
     }
 
+
+    componentDidMount() {
+        axios.get(`http://localhost:9000/cities`)
+          .then(res => {
+            const city = res.data;
+            this.setState({ cities: city });
+          }).catch((error)=>{
+            let message;
+            if(error.response!==undefined){
+                let errorMessage1 = error.response.data;
+                let errorMessage2 = error.message;
+                message = (errorMessage1!==undefined)?errorMessage1.message : errorMessage2;
+            } else {
+                message = error.message;
+            }
+            
+            alert(message);
+          })
+    }
+
+      
+    DataTable() {
+
+        const columns = [
+            { field: 'id', headerName: 'ID', width: 70 },
+            { field: 'nomeCidade', headerName: 'Nome Cidade', width: 150 },
+            
+        ];
+        if(this.state.cities.length >=0){
+            const rows =  this.state.cities.map((location, index) => {
+                const {city_name} = location //destructuring
+                return {id:index, nomeCidade:city_name};
+            })
+           
+            return (
+              <div style={{ height: 400, width: '50%', marginBottom:20 }}>
+                <DataGrid rows={rows} columns={columns} pageSize={5} checkboxSelection 
+                    onSelectionChange={(newSelection) => {
+                        this.setState({selected:newSelection});
+                    }}
+                />
+              </div>
+            );
+        }
+    }
+
+    deleteCity(){
+
+        let deleteCities = {}
+        deleteCities.name= this.state.selected.rowIds.map((selection)=>{
+            return this.state.cities[selection].city_name;
+        })
+
+        axios.put(`http://localhost:9000/deleteCity`,deleteCities)
+          .then(res => {
+          }).catch((error)=>{
+            let message;
+            if(error.response!==undefined){
+                let errorMessage1 = error.response.data;
+                let errorMessage2 = error.message;
+                message = (errorMessage1!==undefined)?errorMessage1.message : errorMessage2;
+            } else {
+                message = error.message;
+            }
+            
+            alert(message);
+        })
+    }
+
     render() {
         return (
             <div>
@@ -133,11 +207,16 @@ class Busca extends Component {
                 {this.state.showCityInfo
                     ? this.showCityInfo()  
                     : <h5>Nenhuma cidade pesquisada ainda</h5>}
-                <Link to="/cidadesSalvas">
+
+                {this.DataTable()}
+                <Link to="/cidadesSalvas" >
                     <button>
                         <span>Comparar</span>
                     </button>
                 </Link>
+                <button onClick={this.deleteCity} style={{marginLeft:700}}>
+                    <span>Deletar</span>
+                </button>
             </div>
         );
  }

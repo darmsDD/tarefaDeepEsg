@@ -44,8 +44,8 @@ class savedCities extends Component {
            return (
               <tr key={index}>
                 <td>{city_name}</td>
-                 <td>{temp}</td>
-                 <td>{humidity}</td>
+                 <td>{temp}ºC</td>
+                 <td>{humidity}%</td>
                  <td>{wind_speedy}</td>
               </tr>
            )

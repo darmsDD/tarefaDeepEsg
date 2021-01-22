@@ -2,11 +2,13 @@
 const express = require('express')
 const cors = require('cors');
 const apiErrorHandler = require('./api-error-handler');
+const bodyParser = require('body-parser');
 const app = express()
 const port = 9000
 const axios = require('axios');
-
 app.use(cors());
+app.use(bodyParser.json())
+
 var cont = 0;
 var cidades = [];
 var cidadeAtual;
@@ -50,9 +52,17 @@ app.post('/save',function(req,res,next){
   res.status(204).send();
 })
 
-app.put('/deleteCity/:city',function(req,res,next){
-  const {city} = req.params;
-  cidades = cidades.filter(item => item.city_name !== city)
+app.put('/deleteCity/',function(req,res,next){
+  const {name} = req.body;
+  cidades = cidades.filter((item) =>{
+      let keepCity = true;
+      name.forEach((cityName)=>{
+        if(item.city_name === cityName){
+          keepCity=false;
+        }
+      })
+      return keepCity;
+  })
   res.status(204).send();
 })
 
