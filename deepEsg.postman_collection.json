@@ -1,0 +1,106 @@
+{
+	"info": {
+		"_postman_id": "d409c598-fec8-4bc9-b740-94fb74c4d4e7",
+		"name": "deepEsg",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "search city",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:9000/search/:city",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9000",
+					"path": [
+						"search",
+						":city"
+					],
+					"variable": [
+						{
+							"key": "city",
+							"value": ""
+						}
+					]
+				},
+				"description": "Search for a city\nexample \nhttp://localhost:9000/search/Brasilia"
+			},
+			"response": []
+		},
+		{
+			"name": "Get all saved cities",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:9000/cities",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9000",
+					"path": [
+						"cities"
+					]
+				},
+				"description": "get all saved cities "
+			},
+			"response": []
+		},
+		{
+			"name": "Save last searched city",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:9000/save",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9000",
+					"path": [
+						"save"
+					]
+				},
+				"description": "Save the last city that was searched"
+			},
+			"response": []
+		},
+		{
+			"name": "Delete cities",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"brasilia\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:9000/deleteCity/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9000",
+					"path": [
+						"deleteCity",
+						""
+					]
+				},
+				"description": "Request to delete one or more cities"
+			},
+			"response": []
+		}
+	]
+}
